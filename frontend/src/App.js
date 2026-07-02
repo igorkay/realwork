@@ -29,9 +29,10 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 relative font-sans text-slate-900">
-      <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-100 rounded-full blur-[120px] opacity-60"></div>
-      <div className="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-100 rounded-full blur-[120px] opacity-60"></div>
+    <div className="min-h-screen bg-[#0d1527] relative font-sans text-slate-100 transition-colors duration-300">
+      {/* Адаптированные неоновые свечения под темный фон */}
+      <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none"></div>
       
       {/* НАВИГАЦИЯ С КНОПКОЙ ВЫХОДА */}
       <nav className="relative z-20 p-4 flex justify-between items-center px-6">
@@ -40,7 +41,10 @@ function App() {
           {user && <UserMenu />}
         </div>
         {user && (
-          <button onClick={handleLogout} className="text-sm bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-xl hover:bg-red-50 hover:text-red-600 transition">
+          <button 
+            onClick={handleLogout} 
+            className="text-sm bg-slate-800/40 border border-slate-700/60 text-slate-300 px-4 py-2 rounded-xl hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition duration-200"
+          >
             Выйти
           </button>
         )}
@@ -54,35 +58,47 @@ function App() {
             ) : (
               <LoginForm 
                 setUser={setUser} 
-                onSwitchToRegister={() => setIsRegistering(true)} 
+                *onSwitchToRegister={() => setIsRegistering(true)} 
               />
             )}
           </div>
         ) : (
           <div className="max-w-2xl mx-auto py-10 pb-40">
-            <h1 className="text-3xl font-bold text-center mb-8 tracking-tight">Панель управления</h1>
+            <h1 className="text-3xl font-extrabold text-center mb-8 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+              Панель управления
+            </h1>
 
-            {/* СЕГМЕНТНЫЙ ПЕРЕКЛЮЧАТЕЛЬ */}
+            {/* ТЕМНЫЙ СЕГМЕНТНЫЙ ПЕРЕКЛЮЧАТЕЛЬ С ТЕКСТОМ ПОКРУПНЕЕ (text-sm) */}
             <div className="flex flex-col items-center mb-10">
-              <div className="relative flex p-1 bg-slate-200/80 backdrop-blur-sm rounded-xl w-full max-w-xs shadow-inner border border-slate-300/40">
-                <div className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-sm transition-all duration-300 ease-out transform ${role === 'customer' ? 'translate-x-full' : 'translate-x-0'}`} />
-                <button onClick={() => setRole('executor')} className={`relative z-10 flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors duration-200 text-center ${role === 'executor' ? 'text-slate-900' : 'text-slate-500 hover:text-slate-800'}`}>Исполнитель</button>
-                <button onClick={() => setRole('customer')} className={`relative z-10 flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors duration-200 text-center ${role === 'customer' ? 'text-slate-900' : 'text-slate-500 hover:text-slate-800'}`}>Заказчик</button>
+              <div className="relative flex p-1 bg-slate-800/60 backdrop-blur-md rounded-xl w-full max-w-xs shadow-inner border border-slate-700/40">
+                <div className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-slate-700 rounded-lg shadow-md transition-all duration-300 ease-out transform ${role === 'customer' ? 'translate-x-full' : 'translate-x-0'}`} />
+                <button 
+                  onClick={() => setRole('executor')} 
+                  className={`relative z-10 flex-1 py-1.5 text-sm font-bold rounded-lg transition-colors duration-200 text-center ${role === 'executor' ? 'text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  Исполнитель
+                </button>
+                <button 
+                  onClick={() => setRole('customer')} 
+                  className={`relative z-10 flex-1 py-1.5 text-sm font-bold rounded-lg transition-colors duration-200 text-center ${role === 'customer' ? 'text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  Заказчик
+                </button>
               </div>
             </div>
 
-            {/* КОНТЕНТ */}
+            {/* КОНТЕНТ В ТЕМНЫХ КАРТОЧКАХ */}
             {role === 'executor' ? (
               <div className="space-y-8 animate-in fade-in duration-700">
-                <div className="bg-white/70 backdrop-blur-md p-6 rounded-3xl border border-white/50 shadow-lg shadow-slate-200/30">
-                  <h2 className="text-xl font-bold mb-6 text-slate-800 flex items-center">
-                    <span className="w-2 h-6 bg-blue-600 rounded-full mr-3"></span>
+                <div className="bg-[#131e35]/60 backdrop-blur-md p-6 rounded-3xl border border-slate-800/80 shadow-2xl shadow-black/20">
+                  <h2 className="text-xl font-bold mb-6 text-white flex items-center">
+                    <span className="w-2 h-6 bg-blue-500 rounded-full mr-3"></span>
                     Доступные задания
                   </h2>
                   <TaskList />
                 </div>
-                <div className="bg-white/70 backdrop-blur-md p-6 rounded-3xl border border-white/50 shadow-lg shadow-slate-200/30">
-                  <h2 className="text-xl font-bold mb-6 text-slate-800 flex items-center">
+                <div className="bg-[#131e35]/60 backdrop-blur-md p-6 rounded-3xl border border-slate-800/80 shadow-2xl shadow-black/20">
+                  <h2 className="text-xl font-bold mb-6 text-white flex items-center">
                     <span className="w-2 h-6 bg-orange-500 rounded-full mr-3"></span>
                     Мои задания в работе
                   </h2>
@@ -91,24 +107,23 @@ function App() {
               </div>
             ) : (
               <div className="space-y-8 animate-in fade-in duration-700">
-                <div className="bg-white/70 backdrop-blur-md p-6 rounded-3xl border border-white/50 shadow-lg shadow-slate-200/30">
-                  <h2 className="text-xl font-bold mb-6 text-slate-800 flex items-center">
+                <div className="bg-[#131e35]/60 backdrop-blur-md p-6 rounded-3xl border border-slate-800/80 shadow-2xl shadow-black/20">
+                  <h2 className="text-xl font-bold mb-6 text-white flex items-center">
                     <span className="w-2 h-6 bg-green-500 rounded-full mr-3"></span>
                     Создать новый заказ
                   </h2>
                   <CreateTaskForm onTaskCreated={() => window.location.reload()} />
                 </div>
 
-                {/* ИСПРАВЛЕНО: Завернули MyCreatedTasks в красивую карточку-подложку корректно, без дублирования стилей и заголовков */}
-                <div className="bg-white/70 backdrop-blur-md p-6 rounded-3xl border border-white/50 shadow-lg shadow-slate-200/30">
+                <div className="bg-[#131e35]/60 backdrop-blur-md p-6 rounded-3xl border border-slate-800/80 shadow-2xl shadow-black/20">
                   <MyCreatedTasks />
                 </div>
               </div>
             )}
 
             {isAdmin && (
-              <div className="mt-20 border-t border-slate-200 pt-10">
-                <h2 className="text-center font-bold text-slate-400 mb-6 uppercase tracking-widest text-sm">Панель администратора</h2>
+              <div className="mt-20 border-t border-slate-800 pt-10">
+                <h2 className="text-center font-bold text-slate-500 mb-6 uppercase tracking-widest text-sm">Панель администратора</h2>
                 <AdminPanel user={user} />
               </div>
             )}
