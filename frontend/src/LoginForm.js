@@ -43,23 +43,6 @@ function LoginForm({ setUser, onSwitchToRegister }) {
     }
   };
 
-  // Жесткий обработчик клика с гарантированным переключением
-  const handleRegisterClick = (e) => {
-    e.preventDefault();
-    console.log("Клик по регистрации зафиксирован");
-    
-    if (onSwitchToRegister) {
-      onSwitchToRegister();
-    } else {
-      // Запасной вариант: если пропс не передан, принудительно меняем хэш урла,
-      // чтобы сработало стандартное переключение, если у тебя стоит React Router
-      console.warn("Пропс onSwitchToRegister отсутствует! Переключаем через hash/route.");
-      window.location.hash = '#/register';
-      // Или если используется обычный путь:
-      // window.history.pushState({}, '', '/register');
-    }
-  };
-
   return (
     <div 
       style={{
@@ -71,11 +54,11 @@ function LoginForm({ setUser, onSwitchToRegister }) {
         backgroundColor: '#090d16',
         display: 'flex',
         overflow: 'hidden',
-        zIndex: 99999
+        zIndex: 9999
       }}
       className="text-white"
     >
-      {/* ЛЕВАЯ ЧАСТЬ: МАРКЕТИНГОВЫЙ БЛОК */}
+      {/* ЛЕВАЯ ЧАСТЬ: МАРКЕТИНГ */}
       <div 
         className="hidden md:flex md:w-1/2 relative flex-col justify-between p-12 lg:p-16 bg-cover bg-center h-full"
         style={{ 
@@ -103,38 +86,6 @@ function LoginForm({ setUser, onSwitchToRegister }) {
           <p className="text-gray-300 text-sm lg:text-base mb-6 leading-relaxed">
             Инновационная экосистема с честным распределением дохода. Мы убрали лишних посредников, чтобы вы работали напрямую и безопасно.
           </p>
-
-          <div className="space-y-4">
-            <div className="flex items-start space-x-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 shrink-0">
-                <i className="fa-solid fa-shield-halved text-base"></i>
-              </div>
-              <div>
-                <h3 className="font-bold text-sm lg:text-base text-white">Безопасные сделки & Крипта</h3>
-                <p className="text-gray-400 text-xs">Встроенный Escrow-гарант защищает ваши средства. Расчеты в USDT и DASH для мгновенных транзакций.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 shrink-0">
-                <i className="fa-solid fa-percent text-base"></i>
-              </div>
-              <div>
-                <h3 className="font-bold text-sm lg:text-base text-white">Максимум заработка, минимум комиссий</h3>
-                <p className="text-gray-400 text-xs">Самые низкие комиссии на рынке. Никаких скрытых удержаний и грабительских процентов.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-400 shrink-0">
-                <i className="fa-solid fa-fire text-base"></i>
-              </div>
-              <div>
-                <h3 className="font-bold text-sm lg:text-base text-white">Спасение для ваших дедлайнов</h3>
-                <p className="text-gray-400 text-xs">Идеально для фрилансеров, которые не успевают в срок. Найдите субподрядчика за пару кликов.</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="text-gray-500 text-xs z-10">
@@ -142,7 +93,7 @@ function LoginForm({ setUser, onSwitchToRegister }) {
         </div>
       </div>
 
-      {/* ПРАВАЯ ЧАСТЬ: ФОРМА ВХОДА */}
+      {/* ПРАВАЯ ЧАСТЬ: ФОРМА */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-4 bg-[#090d16] h-full overflow-y-auto">
         <div className="w-full max-w-sm bg-[#111827]/60 p-6 rounded-2xl border border-gray-800 backdrop-blur-md shadow-2xl space-y-4">
           
@@ -168,7 +119,7 @@ function LoginForm({ setUser, onSwitchToRegister }) {
               <input
                 type="text"
                 required
-                placeholder="Ваш логин"
+                placeholder="Ваш login"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
                 className="w-full bg-[#1f2937]/50 border border-gray-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl py-2 px-3 text-white placeholder-gray-500 outline-none transition duration-200 text-sm"
@@ -198,8 +149,8 @@ function LoginForm({ setUser, onSwitchToRegister }) {
             <div className="text-center pt-2">
               <button
                 type="button"
-                onClick={handleRegisterClick}
-                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition duration-200 hover:underline cursor-pointer py-1 px-2 block w-full relative z-[100001]"
+                onClick={onSwitchToRegister}
+                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition duration-200 hover:underline cursor-pointer py-1"
               >
                 Еще нет аккаунта? Создать новый
               </button>

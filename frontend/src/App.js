@@ -48,11 +48,15 @@ function App() {
       
       <div className="relative z-10 p-4">
         {!user ? (
-          <div className="flex flex-col items-center justify-center min-h-screen">
-            {isRegistering ? <Register /> : <LoginForm setUser={setUser} />}
-            <button onClick={() => setIsRegistering(!isRegistering)} className="mt-6 px-4 py-2 text-blue-600 font-semibold border border-blue-600 rounded-lg hover:bg-blue-50 transition">
-              {isRegistering ? 'Уже есть аккаунт? Войти' : 'Создать новый аккаунт'}
-            </button>
+          <div>
+            {isRegistering ? (
+              <Register onSwitchToLogin={() => setIsRegistering(false)} />
+            ) : (
+              <LoginForm 
+                setUser={setUser} 
+                onSwitchToRegister={() => setIsRegistering(true)} 
+              />
+            )}
           </div>
         ) : (
           <div className="max-w-2xl mx-auto py-10 pb-40">
