@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from './api';
 
-// Принимаем пропсы setUser (для логики) и onSwitchToRegister (если у тебя есть переключалка на регистрацию)
-// Если переключалки нет, проп onSwitchToRegister можно просто убрать
 function LoginForm({ setUser, onSwitchToRegister }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.body.style.backgroundColor = '#090d16';
+    return () => {
+      document.body.style.backgroundColor = '';
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,18 +33,16 @@ function LoginForm({ setUser, onSwitchToRegister }) {
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-[#090d16] text-white">
-      {/* ЛЕВАЯ ЧАСТЬ: МАРКЕТИНГОВЫЙ БЛОК (Скрыт на мобильных, виден на md и выше) */}
+    <div className="flex min-h-screen w-full bg-[#090d16] text-white overflow-x-hidden">
+      {/* ЛЕВАЯ ЧАСТЬ: МАРКЕТИНГОВЫЙ БЛОК */}
       <div 
-        className="hidden md:flex md:w-1/2 relative flex-col justify-between p-12 lg:p-16 overflow-hidden bg-cover bg-center"
+        className="hidden md:flex md:w-1/2 relative flex-col justify-between p-12 lg:p-16 bg-cover bg-center min-h-screen"
         style={{ 
           backgroundImage: `linear-gradient(to bottom, rgba(15, 23, 42, 0.95), rgba(30, 27, 75, 0.95)), url('http://googleusercontent.com/image_collection/image_retrieval/498531985610772507_0')` 
         }}
       >
-        {/* Фоновое свечение */}
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-500 rounded-full blur-[120px] opacity-20"></div>
         
-        {/* Логотип */}
         <div className="flex items-center space-x-3 z-10">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
             <span className="font-bold text-xl tracking-wider text-white">R</span>
@@ -49,8 +52,7 @@ function LoginForm({ setUser, onSwitchToRegister }) {
           </span>
         </div>
 
-        {/* Смыслы и преимущества */}
-        <div className="my-auto max-w-lg z-10">
+        <div className="my-auto max-w-lg z-10 py-8">
           <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-6">
             Делегируйте задачи <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
@@ -62,7 +64,6 @@ function LoginForm({ setUser, onSwitchToRegister }) {
           </p>
 
           <div className="space-y-6">
-            {/* Пункт 1 */}
             <div className="flex items-start space-x-4">
               <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 shrink-0">
                 <i className="fa-solid fa-shield-halved text-xl"></i>
@@ -73,7 +74,6 @@ function LoginForm({ setUser, onSwitchToRegister }) {
               </div>
             </div>
 
-            {/* Пункт 2 */}
             <div className="flex items-start space-x-4">
               <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 shrink-0">
                 <i className="fa-solid fa-percent text-xl"></i>
@@ -84,7 +84,6 @@ function LoginForm({ setUser, onSwitchToRegister }) {
               </div>
             </div>
 
-            {/* Пункт 3 (Придуманный важный и привлекающий) */}
             <div className="flex items-start space-x-4">
               <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-400 shrink-0">
                 <i className="fa-solid fa-fire text-xl"></i>
@@ -97,22 +96,24 @@ function LoginForm({ setUser, onSwitchToRegister }) {
           </div>
         </div>
 
-        {/* Футер левой панели */}
         <div className="text-gray-500 text-xs z-10">
           © 2026 Realwork.pro. Профессиональная экосистема для работы.
         </div>
       </div>
 
-      {/* ПРАВАЯ ЧАСТЬ: ФОРМА ВХОДА (Занимает 100% на мобилках и 50% на десктопе) */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8 lg:p-12 bg-[#090d16]">
-        <div className="w-full max-w-md space-y-8 bg-[#111827]/40 p-8 rounded-2xl border border-gray-800 backdrop-blur-sm">
+      {/* ПРАВАЯ ЧАСТЬ: ФОРМА ВХОДА */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-6 lg:p-12 bg-[#090d16] min-h-screen">
+        <div className="w-full max-w-md space-y-6 bg-[#111827]/40 p-8 rounded-2xl border border-gray-800 backdrop-blur-sm shadow-2xl">
           
           <div className="text-center md:text-left">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-xl text-xl mb-3 border border-indigo-500/20">
+              🔐
+            </div>
             <h2 className="text-3xl font-bold tracking-tight">Войти в аккаунт</h2>
-            <p className="text-gray-400 mt-2 text-sm">Добро пожаловать обратно</p>
+            <p className="text-gray-400 mt-1.5 text-sm">Добро пожаловать обратно</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl text-sm font-medium">
                 {error}
@@ -152,13 +153,13 @@ function LoginForm({ setUser, onSwitchToRegister }) {
             </button>
 
             {onSwitchToRegister && (
-              <div className="text-center pt-2">
+              <div className="text-center pt-3 border-t border-gray-800/60 mt-4">
                 <button
                   type="button"
                   onClick={onSwitchToRegister}
-                  className="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition duration-200"
+                  className="w-full py-2.5 px-4 rounded-xl border border-gray-700 hover:border-indigo-500 text-indigo-400 hover:text-indigo-300 text-sm font-medium transition duration-200"
                 >
-                  Нет аккаунта? Зарегистрироваться
+                  Создать новый аккаунт
                 </button>
               </div>
             )}
