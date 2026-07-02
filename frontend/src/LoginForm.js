@@ -11,21 +11,16 @@ function LoginForm({ setUser, onSwitchToRegister }) {
     const html = document.documentElement;
     const body = document.body;
     
-    html.style.margin = '0';
-    html.style.padding = '0';
-    html.style.overflow = 'hidden';
-    html.style.height = '100%';
+    // Мягко настраиваем фон, не ломая позиционирование других компонентов
     html.style.backgroundColor = '#090d16';
-
-    body.style.margin = '0';
-    body.style.padding = '0';
-    body.style.overflow = 'hidden';
-    body.style.height = '100%';
     body.style.backgroundColor = '#090d16';
+    html.style.margin = '0';
+    body.style.margin = '0';
 
     return () => {
-      html.style.overflow = '';
-      body.style.overflow = '';
+      // При переключении на Регистрацию зануляем глобальные стили фона, если нужно
+      html.style.backgroundColor = '';
+      body.style.backgroundColor = '';
     };
   }, []);
 
@@ -48,7 +43,8 @@ function LoginForm({ setUser, onSwitchToRegister }) {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-[#090d16] text-white flex overflow-hidden z-[9999]">
+    // Заменили fixed на absolute и убрали безумный z-index, чтобы компонент мог скрываться
+    <div className="absolute inset-0 w-full h-full bg-[#090d16] text-white flex overflow-hidden">
       
       {/* ЛЕВАЯ ЧАСТЬ: МАРКЕТИНГОВЫЙ БЛОК */}
       <div 
@@ -95,7 +91,7 @@ function LoginForm({ setUser, onSwitchToRegister }) {
                 <i className="fa-solid fa-percent text-base"></i>
               </div>
               <div>
-                <h3 className="font-bold text-sm lg:text-base text-white">Максимум заработка, minimum комиссий</h3>
+                <h3 className="font-bold text-sm lg:text-base text-white">Максимум заработка, минимум комиссий</h3>
                 <p className="text-gray-400 text-xs">Самые низкие комиссии на рынке. Никаких скрытых удержаний и грабительских процентов.</p>
               </div>
             </div>
@@ -170,11 +166,10 @@ function LoginForm({ setUser, onSwitchToRegister }) {
               {loading ? 'Авторизация...' : 'Войти в панель'}
             </button>
 
-            {/* КНОПКА РЕГИСТРАЦИИ: теперь жестко выводится сразу под кнопкой входа */}
             <div className="text-center pt-2">
               <button
                 type="button"
-                onClick={onSwitchToRegister || (() => console.log('Переключение на регистрацию'))}
+                onClick={onSwitchToRegister}
                 className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition duration-200 hover:underline"
               >
                 Еще нет аккаунта? Создать новый
