@@ -11,14 +11,16 @@ function LoginForm({ setUser, onSwitchToRegister }) {
     const html = document.documentElement;
     const body = document.body;
     
-    // Мягко настраиваем фон, не ломая позиционирование других компонентов
-    html.style.backgroundColor = '#090d16';
-    body.style.backgroundColor = '#090d16';
-    html.style.margin = '0';
-    body.style.margin = '0';
+    // Принудительно убираем все отступы и ставим темный фон на глобальном уровне
+    html.style.setProperty('margin', '0', 'important');
+    html.style.setProperty('padding', '0', 'important');
+    html.style.setProperty('background-color', '#090d16', 'important');
+    
+    body.style.setProperty('margin', '0', 'important');
+    body.style.setProperty('padding', '0', 'important');
+    body.style.setProperty('background-color', '#090d16', 'important');
 
     return () => {
-      // При переключении на Регистрацию зануляем глобальные стили фона, если нужно
       html.style.backgroundColor = '';
       body.style.backgroundColor = '';
     };
@@ -43,9 +45,20 @@ function LoginForm({ setUser, onSwitchToRegister }) {
   };
 
   return (
-    // Заменили fixed на absolute и убрали безумный z-index, чтобы компонент мог скрываться
-    <div className="absolute inset-0 w-full h-full bg-[#090d16] text-white flex overflow-hidden">
-      
+    <div 
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: '#090d16',
+        display: 'flex',
+        overflow: 'hidden',
+        zIndex: 99999
+      }}
+      className="text-white"
+    >
       {/* ЛЕВАЯ ЧАСТЬ: МАРКЕТИНГОВЫЙ БЛОК */}
       <div 
         className="hidden md:flex md:w-1/2 relative flex-col justify-between p-12 lg:p-16 bg-cover bg-center h-full"
@@ -169,10 +182,17 @@ function LoginForm({ setUser, onSwitchToRegister }) {
             <div className="text-center pt-2">
               <button
                 type="button"
-                onClick={onSwitchToRegister}
-                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition duration-200 hover:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onSwitchToRegister) {
+                    onSwitchToRegister();
+                  } else {
+                    console.log("onSwitchToRegister prop is missing!");
+                  }
+                }}
+                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition duration-200 hover:underline cursor-pointer"
               >
-                Еще нет аккаунта? Создать новый
+                Еще нет акканаута? Создать новый
               </button>
             </div>
           </form>
