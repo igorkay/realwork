@@ -249,6 +249,23 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = UserSerializer
 
+    def perform_create(self, serializer):
+        # 1. Сначала стандартно сохраняем пользователя в базу данных
+        user = serializer.save()
+        
+        # 2. Безопасно достаем email, который прилетел с фронтенда
+        email = self.request.data.get('email')
+        
+        # 3. Если email передан, дописываем его в файл логов на сервере
+        if email:
+            try:
+                # Файл запишется в корневую папку проекта на сервере Zomro
+                with open("emails.txt", "a", encoding="utf-8") as f:
+                    f.write(f"{timezone.now()} | ID: {user.id} | User: {user.username} | Email: {email}\n")
+            except Exception as e:
+                # Если что-то пойдет не так с файлом, регистрация не упадет
+                print(f"Ошибка записи email в файл: {e}")
+
 class YourProtectedView(APIView):
     permission_classes = [IsAuthenticated]
 
