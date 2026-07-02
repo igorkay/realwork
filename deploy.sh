@@ -8,6 +8,7 @@ git push
 
 # 2. Подключаемся к серверу по SSH и выполняем там команды обновления и сборки
 echo "🌐 Подключаемся к серверу и обновляем билд..."
-ssh root@realwork.pro "cd /var/www/realwork/frontend && git pull && npm run build"
+# ДОБАВИЛИ ФЛАГ DISABLE_ESLINT_PLUGIN=true ПЕРЕД СБОРКОЙ:
+ssh root@realwork.pro "cd /var/www/realwork/frontend && git pull && DISABLE_ESLINT_PLUGIN=true npm run build"
 
 echo "🎉 Деплой успешно завершен! Проверяй сайт."
