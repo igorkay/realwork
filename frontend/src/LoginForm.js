@@ -11,7 +11,6 @@ function LoginForm({ setUser, onSwitchToRegister }) {
     const html = document.documentElement;
     const body = document.body;
     
-    // Принудительно убираем все отступы и ставим темный фон на глобальном уровне
     html.style.setProperty('margin', '0', 'important');
     html.style.setProperty('padding', '0', 'important');
     html.style.setProperty('background-color', '#090d16', 'important');
@@ -41,6 +40,23 @@ function LoginForm({ setUser, onSwitchToRegister }) {
       setError(err.response?.data?.detail || 'Неверный логин или пароль');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Жесткий обработчик клика с гарантированным переключением
+  const handleRegisterClick = (e) => {
+    e.preventDefault();
+    console.log("Клик по регистрации зафиксирован");
+    
+    if (onSwitchToRegister) {
+      onSwitchToRegister();
+    } else {
+      // Запасной вариант: если пропс не передан, принудительно меняем хэш урла,
+      // чтобы сработало стандартное переключение, если у тебя стоит React Router
+      console.warn("Пропс onSwitchToRegister отсутствует! Переключаем через hash/route.");
+      window.location.hash = '#/register';
+      // Или если используется обычный путь:
+      // window.history.pushState({}, '', '/register');
     }
   };
 
@@ -182,17 +198,10 @@ function LoginForm({ setUser, onSwitchToRegister }) {
             <div className="text-center pt-2">
               <button
                 type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (onSwitchToRegister) {
-                    onSwitchToRegister();
-                  } else {
-                    console.log("onSwitchToRegister prop is missing!");
-                  }
-                }}
-                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition duration-200 hover:underline cursor-pointer"
+                onClick={handleRegisterClick}
+                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition duration-200 hover:underline cursor-pointer py-1 px-2 block w-full relative z-[100001]"
               >
-                Еще нет акканаута? Создать новый
+                Еще нет аккаунта? Создать новый
               </button>
             </div>
           </form>
