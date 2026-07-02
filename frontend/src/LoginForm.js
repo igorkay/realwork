@@ -8,7 +8,6 @@ function LoginForm({ setUser, onSwitchToRegister }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Полностью изолируем страницу от внешних стилей проекта
     const html = document.documentElement;
     const body = document.body;
     
@@ -49,7 +48,6 @@ function LoginForm({ setUser, onSwitchToRegister }) {
   };
 
   return (
-    // fixed top-0 left-0 w-screen h-screen — гарантирует, что мы перекроем любые внешние контейнеры
     <div className="fixed top-0 left-0 w-screen h-screen bg-[#090d16] text-white flex overflow-hidden z-[9999]">
       
       {/* ЛЕВАЯ ЧАСТЬ: МАРКЕТИНГОВЫЙ БЛОК */}
@@ -97,7 +95,7 @@ function LoginForm({ setUser, onSwitchToRegister }) {
                 <i className="fa-solid fa-percent text-base"></i>
               </div>
               <div>
-                <h3 className="font-bold text-sm lg:text-base text-white">Максимум заработка, минимум комиссий</h3>
+                <h3 className="font-bold text-sm lg:text-base text-white">Максимум заработка, minimum комиссий</h3>
                 <p className="text-gray-400 text-xs">Самые низкие комиссии на рынке. Никаких скрытых удержаний и грабительских процентов.</p>
               </div>
             </div>
@@ -172,17 +170,16 @@ function LoginForm({ setUser, onSwitchToRegister }) {
               {loading ? 'Авторизация...' : 'Войти в панель'}
             </button>
 
-            {onSwitchToRegister && (
-              <div className="text-center pt-2 border-t border-gray-800/60 mt-2">
-                <button
-                  type="button"
-                  onClick={onSwitchToRegister}
-                  className="w-full py-2 px-4 rounded-xl border border-gray-700 hover:border-indigo-500 text-indigo-400 hover:text-indigo-300 text-sm font-medium transition duration-200"
-                >
-                  Создать новый аккаунт
-                </button>
-              </div>
-            )}
+            {/* КНОПКА РЕГИСТРАЦИИ: теперь жестко выводится сразу под кнопкой входа */}
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                onClick={onSwitchToRegister || (() => console.log('Переключение на регистрацию'))}
+                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition duration-200 hover:underline"
+              >
+                Еще нет аккаунта? Создать новый
+              </button>
+            </div>
           </form>
         </div>
       </div>
