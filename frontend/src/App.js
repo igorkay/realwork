@@ -58,7 +58,7 @@ function App() {
             ) : (
               <LoginForm 
                 setUser={setUser} 
-                *onSwitchToRegister={() => setIsRegistering(true)} 
+                onSwitchToRegister={() => setIsRegistering(true)} 
               />
             )}
           </div>
