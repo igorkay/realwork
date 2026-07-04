@@ -354,7 +354,7 @@ class MyActiveTasksListView(generics.ListAPIView):
         # Просто отдает все неактивные задачи, где юзер - исполнитель
         return Task.objects.filter(executor=self.request.user, is_active=False)
 
-@@api_view(['POST'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_payment_invoice(request):
     try:
