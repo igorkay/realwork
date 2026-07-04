@@ -354,10 +354,11 @@ class MyActiveTasksListView(generics.ListAPIView):
         # Просто отдает все неактивные задачи, где юзер - исполнитель
         return Task.objects.filter(executor=self.request.user, is_active=False)
 
-@api_view(['POST'])
+@@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_payment_invoice(request):
     try:
+        # В DRF данные извлекаются через request.data
         amount = request.data.get('amount')
         
         if not amount:
@@ -374,7 +375,7 @@ def create_payment_invoice(request):
         payload = {
             "shop_id": "oQ6SU20ybRVb4VoX",
             "amount": float(amount),
-            "currency": "RUB",  # <-- Поменяли на RUB для теста, так как USDT часто требует спец. настроек в мерчанте
+            "currency": "USDT",  # Возвращаем USDT, раз CryptoCloud его одобрил
             "order_id": f"pay_{int(user_id)}_{int(amount)}",
             "callback_url": "https://realwork.pro/api/payments/webhook/"
         }
@@ -382,19 +383,18 @@ def create_payment_invoice(request):
         response = requests.post(url, json=payload, headers=headers)
         res_data = response.json()
 
-        # Выводим ответ CryptoCloud в консоль/лог сервера для отладки
-        print("=== CRYPTOCLOUD RESPONSE ===")
+        # Логируем для отладки
+        print("=== CRYPTOCLOUD SUCCESSFUL LOG ===")
         print(res_data)
 
-       if res_data.get('status') == 'success':
-            # Меняем res_data['result']['link'] на прямой ключ 'pay_url'
+        if res_data.get('status') == 'success':
+            # Забираем ссылку прямо из pay_url, без ['result']['link']
             return Response({'pay_url': res_data.get('pay_url')})
         else:
             return Response({'error': res_data.get('message', 'CryptoCloud error'), 'details': res_data}, status=400)
 
     except Exception as e:
         return Response({'error': str(e)}, status=500)
-
 
 @csrf_exempt
 def crypto_webhook(request):
