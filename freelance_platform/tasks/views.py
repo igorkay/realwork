@@ -249,22 +249,26 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = UserSerializer
 
-    def perform_create(self, serializer):
-        # 1. Сначала стандартно сохраняем пользователя в базу данных
-        user = serializer.save()
+    def post(self, request, *args, **kwargs):
+        # 1. Извлекаем email напрямую из сырых данных запроса ДО валидации сериализатора
+        email_data = request.data.get('email')
         
-        # 2. Безопасно достаем email, который прилетел с фронтенда
-        email = self.request.data.get('email')
+        # 2. Запускаем стандартный процесс валидации и создания пользователя
+        response = super().post(request, *args, **kwargs)
         
-        # 3. Если email передан, дописываем его в файл логов на сервере
-        if email:
+        # 3. Если пользователь успешно создался (код 201) и email передан — пишем в файл
+        if response.status_code == 201 and email_data:
             try:
-                # Файл запишется в корневую папку проекта на сервере Zomro
+                # Получаем имя созданного пользователя из ответа бэкенда
+                username = response.data.get('username', 'unknown')
+                
+                # Записываем в файл прямо в корне папки freelance_platform
                 with open("emails.txt", "a", encoding="utf-8") as f:
-                    f.write(f"{timezone.now()} | ID: {user.id} | User: {user.username} | Email: {email}\n")
+                    f.write(f"{timezone.now()} | User: {username} | Email: {email_data}\n")
             except Exception as e:
-                # Если что-то пойдет не так с файлом, регистрация не упадет
                 print(f"Ошибка записи email в файл: {e}")
+                
+        return response
 
 class YourProtectedView(APIView):
     permission_classes = [IsAuthenticated]

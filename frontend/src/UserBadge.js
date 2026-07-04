@@ -9,6 +9,9 @@ function UserBadge() {
     balance_usdt: 0.00, // Поле для баланса в USDT
     completed_tasks: 0   // Поле для количества выполненных задач
   });
+  
+  // Состояние загрузки, чтобы заблокировать кнопку во время запроса к API
+  const [isPaying, setIsPaying] = useState(false);
 
   const menuRef = useRef(null);
 
@@ -29,6 +32,39 @@ function UserBadge() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Функция обработки клика по кнопке «Пополнить баланс»
+  const handleTopUp = async () => {
+    const amount = prompt("Введите сумму пополнения в USDT (например, 10):", "10");
+    
+    // Если пользователь нажал "Отмена" или ввёл пустую строку
+    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+      if (amount !== null) alert("Пожалуйста, введите корректную сумму.");
+      return;
+    }
+
+    setIsPaying(true);
+
+    try {
+      // Стучимся на созданный нами Django эндпоинт
+      const response = await api.post('payments/create/', {
+        amount: parseFloat(amount),
+        currency: 'USD' // Базовая валюта расчетов в системе CryptoCloud
+      });
+
+      if (response.data.status === 'success' && response.data.payment_url) {
+        // Редиректим пользователя на страницу оплаты CryptoCloud
+        window.location.href = response.data.payment_url;
+      } else {
+        alert("Ошибка платежной системы: " + (response.data.message || "Не удалось создать счет"));
+        setIsPaying(false);
+      }
+    } catch (err) {
+      console.error("Ошибка при создании инвойса:", err);
+      alert("Не удалось связаться с сервером оплаты. Попробуйте позже.");
+      setIsPaying(false);
+    }
+  };
 
   const firstLetter = userData.username ? userData.username.charAt(0).toUpperCase() : 'U';
 
@@ -76,7 +112,6 @@ function UserBadge() {
       </button>
 
       {/* ВЫПАДАЮЩЕЕ ПРЕМИУМ МЕНЮ */}
-      {/* ВЫПАДАЮЩЕЕ ПРЕМИУМ МЕНЮ */}
       {isOpen && (
         <div className="absolute left-0 mt-3 w-72 bg-white border border-slate-100 rounded-[28px] shadow-[0_20px_50px_rgba(15,23,42,0.08)] p-5 z-50 animate-in fade-in slide-in-from-top-3 duration-200 origin-top-left">
           
@@ -89,9 +124,13 @@ function UserBadge() {
               <span className="text-xs font-bold text-indigo-400">USDT</span>
             </div>
             
-            {/* Микро-кнопка быстрого перехода к депозиту */}
-            <button className="mt-3 w-full py-2 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] transition-all rounded-xl text-xs font-bold text-center flex items-center justify-center gap-1.5 shadow-md shadow-indigo-950/20">
-              💎 Пополнить баланс
+            {/* Кнопка пополнения баланса со статусом загрузки */}
+            <button 
+              onClick={handleTopUp}
+              disabled={isPaying}
+              className={`mt-3 w-full py-2 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] transition-all rounded-xl text-xs font-bold text-center flex items-center justify-center gap-1.5 shadow-md shadow-indigo-950/20 ${isPaying ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+            >
+              {isPaying ? '⏳ Создание счета...' : '💎 Пополнить баланс'}
             </button>
           </div>
 
@@ -133,9 +172,9 @@ function UserBadge() {
               className="w-full text-left px-3 py-2.5 bg-rose-50/40 hover:bg-rose-50 rounded-xl text-sm font-bold text-rose-600 transition flex items-center gap-2.5"
             >
               🚪 Выйти из системы
-              </button>
+            </button>
           </div>
-        </div> // <--- ЭТОГО ЗАКРЫВАЮЩЕГО ТЕГА НЕ ХВАТАЛО
+        </div>
       )}
     </div>
   );
