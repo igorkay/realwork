@@ -376,6 +376,7 @@ def create_payment_invoice(request):
             "shop_id": "oQ6SU20ybRVb4VoX",
             "amount": float(amount),
             "currency": "USDT",  # Возвращаем USDT, раз CryptoCloud его одобрил
+            "network": "TRC20",
             "order_id": f"pay_{int(user_id)}_{int(amount)}",
             "callback_url": "https://realwork.pro/api/payments/webhook/"
         }
