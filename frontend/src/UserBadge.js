@@ -48,20 +48,25 @@ function UserBadge() {
     try {
       // Стучимся на созданный нами Django эндпоинт
       const response = await api.post('payments/create/', {
-        amount: parseFloat(amount),
-        currency: 'USD' // Базовая валюта расчетов в системе CryptoCloud
+        amount: parseFloat(amount)
+        // Убрали currency: 'USD', так как бэкенд сам жестко задает USDT_TRC20
       });
 
-      if (response.data.status === 'success' && response.data.payment_url) {
-        // Редиректим пользователя на страницу оплаты CryptoCloud
-        window.location.href = response.data.payment_url;
+      // НАШЕ ИСПРАВЛЕНИЕ: Бэк отдает объект, где сразу лежит ключ pay_url
+      if (response.data && response.data.pay_url) {
+        // Редиректим пользователя на валидную страницу оплаты CryptoCloud
+        window.location.href = response.data.pay_url;
       } else {
-        alert("Ошибка платежной системы: " + (response.data.message || "Не удалось создать счет"));
+        // Если вдруг бэк прислал ошибку в формате DRF
+        alert("Ошибка платежной системы: " + (response.data.error || "Не удалось создать счет"));
         setIsPaying(false);
       }
     } catch (err) {
       console.error("Ошибка при создании инвойса:", err);
-      alert("Не удалось связаться с сервером оплаты. Попробуйте позже.");
+      
+      // Вытаскиваем точную ошибку из ответа бэка, если она там есть
+      const errorMsg = err.response?.data?.error || "Не удалось связаться с сервером оплаты. Попробуйте позже.";
+      alert(errorMsg);
       setIsPaying(false);
     }
   };
