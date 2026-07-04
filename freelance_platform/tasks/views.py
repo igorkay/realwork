@@ -386,10 +386,10 @@ def create_payment_invoice(request):
         print("=== CRYPTOCLOUD RESPONSE ===")
         print(res_data)
 
-        if res_data.get('status') == 'success':
-            return Response({'pay_url': res_data['result']['link']})
+       if res_data.get('status') == 'success':
+            # Меняем res_data['result']['link'] на прямой ключ 'pay_url'
+            return Response({'pay_url': res_data.get('pay_url')})
         else:
-            # Теперь мы возвращаем фронтенду ТОЧНУЮ ошибку от CryptoCloud
             return Response({'error': res_data.get('message', 'CryptoCloud error'), 'details': res_data}, status=400)
 
     except Exception as e:
