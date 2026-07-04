@@ -354,44 +354,46 @@ class MyActiveTasksListView(generics.ListAPIView):
         # Просто отдает все неактивные задачи, где юзер - исполнитель
         return Task.objects.filter(executor=self.request.user, is_active=False)
 
-@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_payment_invoice(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Only POST requests allowed'}, status=405)
-
     try:
-        data = json.loads(request.body)
-        amount = data.get('amount')
+        amount = request.data.get('amount')
         
         if not amount:
-            return JsonResponse({'error': 'Amount is required'}, status=400)
+            return Response({'error': 'Amount is required'}, status=400)
 
-        # Данные для запроса к CryptoCloud
         url = "https://api.cryptocloud.plus/v1/invoice/create"
         headers = {
             "Authorization": "Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkIjoiTVRBNE1qQTUiLCJ0eXBlIjoicHJvamVjdCIsInYiOiIzODhiZmUxODU4NmIxY2IwNWVhMGNmNDkwODMxZjZhN2M2ODVjMThiZjA5ZDJjMTZhYjVmYjhlZjcwMjdhMTA0IiwiZXhwIjo4ODE4Mjk5OTE4NH0.HQVxpmSZYnHdU4bVxunYLl900YwLbXM3BAlplTbRcbM",
             "Content-Type": "application/json"
         }
+        
+        user_id = request.user.id
+        
         payload = {
             "shop_id": "oQ6SU20ybRVb4VoX",
             "amount": float(amount),
-            "currency": "USDT",
-            "order_id": f"pay_{int(request.user.id if request.user.is_authenticated else 0)}_{int(amount)}",
-            # Сюда CryptoCloud пришлет уведомление после успешной оплаты:
+            "currency": "RUB",  # <-- Поменяли на RUB для теста, так как USDT часто требует спец. настроек в мерчанте
+            "order_id": f"pay_{int(user_id)}_{int(amount)}",
             "callback_url": "https://realwork.pro/api/payments/webhook/"
         }
 
         response = requests.post(url, json=payload, headers=headers)
         res_data = response.json()
 
+        # Выводим ответ CryptoCloud в консоль/лог сервера для отладки
+        print("=== CRYPTOCLOUD RESPONSE ===")
+        print(res_data)
+
         if res_data.get('status') == 'success':
-            # Возвращаем фронтенду ссылку на платежную форму
-            return JsonResponse({'pay_url': res_data['result']['link']})
+            return Response({'pay_url': res_data['result']['link']})
         else:
-            return JsonResponse({'error': res_data.get('message', 'CryptoCloud error')}, status=400)
+            # Теперь мы возвращаем фронтенду ТОЧНУЮ ошибку от CryptoCloud
+            return Response({'error': res_data.get('message', 'CryptoCloud error'), 'details': res_data}, status=400)
 
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return Response({'error': str(e)}, status=500)
 
 
 @csrf_exempt
