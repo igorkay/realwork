@@ -16,14 +16,14 @@ from .views import (
     TaskStatusUpdateView,
     skip_task,
     get_current_user,
-    create_payment_invoice,
-    crypto_webhook
+    create_payment_invoice,  # <-- ДОБАВИЛИ ИМПОРТ ПЛАТЕЖЕЙ
+    crypto_webhook          # <-- ДОБАВИЛИ ИМПОРТ ВЕБХУКА
 )
 
 urlpatterns = [
     path('tasks/', TaskListCreate.as_view(), name='task-list-create'),
-    path('tasks/<int:pk>/', TaskUpdate.as_view(), name='task-update'), # Для патча (взятия заказа)
-    path('tasks/random/', GetRandomTask.as_view(), name='random-task'), # Для получения случайного заказа
+    path('tasks/<int:pk>/', TaskUpdate.as_view(), name='task-update'), 
+    path('tasks/random/', GetRandomTask.as_view(), name='random-task'), 
     path('tasks/my-active/', MyActiveTasksView.as_view(), name='my-active-tasks'),
     path('tasks/my-created/', MyCreatedTasksView.as_view(), name='my-created-tasks'),
     path('tasks/<int:pk>/cancel/', CancelTaskView.as_view(), name='cancel-task'),
@@ -36,6 +36,8 @@ urlpatterns = [
     path('me/', get_me, name='get-me'),
     path('tasks/skip/', skip_task, name='skip-task'),
     path('users/me/', get_current_user, name='get-current-user'),
-    path('payments/create/', views.create_payment_invoice, name='create-payment-invoice'),
-    path('payments/webhook/', views.crypto_webhook, name='crypto-webhook'),
+    
+    # ПУТИ ДЛЯ КРИПТО-ПЛАТЕЖЕЙ:
+    path('payments/create/', create_payment_invoice, name='create-payment-invoice'),
+    path('payments/webhook/', crypto_webhook, name='crypto-webhook'),
 ]
