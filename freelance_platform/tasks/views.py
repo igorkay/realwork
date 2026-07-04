@@ -18,6 +18,10 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
+import requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 User = get_user_model()
@@ -349,3 +353,73 @@ class MyActiveTasksListView(generics.ListAPIView):
     def get_queryset(self):
         # Просто отдает все неактивные задачи, где юзер - исполнитель
         return Task.objects.filter(executor=self.request.user, is_active=False)
+
+@csrf_exempt
+def create_payment_invoice(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST requests allowed'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        amount = data.get('amount')
+        
+        if not amount:
+            return JsonResponse({'error': 'Amount is required'}, status=400)
+
+        # Данные для запроса к CryptoCloud
+        url = "https://api.cryptocloud.plus/v1/invoice/create"
+        headers = {
+            "Authorization": "Token eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1dWlkIjoiTVRBNE1qQTUiLCJ0eXBlIjoicHJvamVjdCIsInYiOiIzODhiZmUxODU4NmIxY2IwNWVhMGNmNDkwODMxZjZhN2M2ODVjMThiZjA5ZDJjMTZhYjVmYjhlZjcwMjdhMTA0IiwiZXhwIjo4ODE4Mjk5OTE4NH0.HQVxpmSZYnHdU4bVxunYLl900YwLbXM3BAlplTbRcbM",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "shop_id": "oQ6SU20ybRVb4VoX",
+            "amount": float(amount),
+            "currency": "USDT",
+            "order_id": f"pay_{int(request.user.id if request.user.is_authenticated else 0)}_{int(amount)}",
+            # Сюда CryptoCloud пришлет уведомление после успешной оплаты:
+            "callback_url": "https://realwork.pro/api/payments/webhook/"
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+        res_data = response.json()
+
+        if res_data.get('status') == 'success':
+            # Возвращаем фронтенду ссылку на платежную форму
+            return JsonResponse({'pay_url': res_data['result']['link']})
+        else:
+            return JsonResponse({'error': res_data.get('message', 'CryptoCloud error')}, status=400)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+def crypto_webhook(request):
+    if request.method == 'POST':
+        # CryptoCloud присылает данные в формате x-www-form-urlencoded или JSON
+        data = request.POST if request.POST else json.loads(request.body)
+        
+        status = data.get('status')
+        order_id = data.get('order_id')  # Наш сгенерированный order_id
+
+        if status == 'success' and order_id:
+            # Тут будет логика начисления баланса пользователю.
+            # Мы можем распарсить order_id (например, pay_USERID_AMOUNT)
+            try:
+                parts = order_id.split('_')
+                if len(parts) >= 3:
+                    user_id = int(parts[1])
+                    amount = float(parts[2])
+                    
+                    # Здесь должен быть твой код обновления баланса в базе данных, например:
+                    # user = User.objects.get(id=user_id)
+                    # user.balance += amount
+                    # user.save()
+                    pass
+            except Exception as e:
+                print(f"Error updating balance in webhook: {e}")
+
+        return JsonResponse({'status': 'ok'})
+    
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
