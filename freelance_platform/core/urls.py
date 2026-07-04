@@ -14,6 +14,8 @@ urlpatterns = [
     # Добавляем эти пути:
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/payments/create/', create_payment_invoice, name='create-payment-invoice'),
+    path('api/payments/webhook/', crypto_webhook, name='crypto-webhook'),
 ]
 
 if settings.DEBUG:

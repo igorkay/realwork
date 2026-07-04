@@ -15,7 +15,9 @@ from .views import (
     TaskReportDetailView, 
     TaskStatusUpdateView,
     skip_task,
-    get_current_user
+    get_current_user,
+    create_payment_invoice,
+    crypto_webhook
 )
 
 urlpatterns = [
@@ -34,4 +36,6 @@ urlpatterns = [
     path('me/', get_me, name='get-me'),
     path('tasks/skip/', skip_task, name='skip-task'),
     path('users/me/', get_current_user, name='get-current-user'),
+    path('payments/create/', views.create_payment_invoice, name='create-payment-invoice'),
+    path('payments/webhook/', views.crypto_webhook, name='crypto-webhook'),
 ]
