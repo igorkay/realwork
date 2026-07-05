@@ -28,6 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['realwork.pro', 'www.realwork.pro', '127.0.0.1', 'localhost']
 CSRF_TRUSTED_ORIGINS = ['https://realwork.pro', 'https://www.realwork.pro']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
