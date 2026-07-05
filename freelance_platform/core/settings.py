@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-5v&4!(32om7*xrf)=p!0uz74s2e!zz86knl0(asz-$py6anaui
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['realwork.pro', 'www.realwork.pro', '127.0.0.1', 'localhost']
+CSRF_TRUSTED_ORIGINS = ['https://realwork.pro', 'https://www.realwork.pro']
 
 
 # Application definition
